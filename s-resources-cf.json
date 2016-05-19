@@ -32,6 +32,37 @@
         "TableName": "${project}-sobjects-${stage}"
       }
     },
+    "DynamoDbMetadataTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "label",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "key_prefix",
+            "AttributeType": "S"
+          }],
+        "KeySchema": [
+          {
+            "AttributeName": "label",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "key_prefix",
+            "KeyType": "RANGE"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        },
+        "TableName": "${project}-metadata-${stage}"
+      }
+    },
+
     "IamRoleLambda": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -74,6 +105,11 @@
               "Effect": "Allow",
               "Action": "*",
               "Resource": "arn:aws:dynamodb:${region}:*:table/${project}-sobjects-${stage}"
+            },
+            {
+              "Effect": "Allow",
+              "Action": "*",
+              "Resource": "arn:aws:dynamodb:${region}:*:table/${project}-metadata-${stage}"
             }
           ]
         },
