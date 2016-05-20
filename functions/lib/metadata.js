@@ -17,3 +17,25 @@ module.exports.createObject = function (event, callback) {
     }
   });
 };
+
+module.exports.index = function (event, callback) {
+  var params = {
+    TableName: dynamo.metadataTableName,
+    FilterExpression: "#type = :sobject",
+    ExpressionAttributeNames: {
+      "#type": "type",
+    },
+    ExpressionAttributeValues: {
+      ":sobject": "SObject"
+   }
+  }
+  return dynamo.doc.scan(params, function (error, data) {
+    if (error) {
+      callback(error);
+    } else {
+      var items = data.Items;
+      var newData = { 'sobjects' : items };
+      callback(error, newData);
+    }
+  });
+};

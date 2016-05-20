@@ -62,7 +62,7 @@
       "Properties": {
         "AttributeDefinitions": [
           {
-            "AttributeName": "developer_name",
+            "AttributeName": "name",
             "AttributeType": "S"
           },
           {
@@ -72,7 +72,7 @@
         ],
         "KeySchema": [
           {
-            "AttributeName": "developer_name",
+            "AttributeName": "name",
             "KeyType": "HASH"
           },
           {
