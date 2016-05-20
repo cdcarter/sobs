@@ -2,6 +2,29 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "IAM and DynamoDB Resources for SOBS",
   "Resources": {
+    "DynamoDbConfigTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        },
+        "TableName": "${project}-config-${stage}"
+      }
+    },
     "DynamoDbSObjectTable": {
       "Type": "AWS::DynamoDB::Table",
       "DeletionPolicy": "Retain",
@@ -12,16 +35,17 @@
             "AttributeType": "S"
           },
           {
-            "AttributeName": "key_prefix",
+            "AttributeName": "sobject_type",
             "AttributeType": "S"
-          }],
+          }
+        ],
         "KeySchema": [
           {
             "AttributeName": "id",
             "KeyType": "HASH"
           },
           {
-            "AttributeName": "key_prefix",
+            "AttributeName": "sobject_type",
             "KeyType": "RANGE"
           }
         ],
@@ -38,20 +62,21 @@
       "Properties": {
         "AttributeDefinitions": [
           {
-            "AttributeName": "label",
+            "AttributeName": "developer_name",
             "AttributeType": "S"
           },
           {
-            "AttributeName": "key_prefix",
+            "AttributeName": "type",
             "AttributeType": "S"
-          }],
+          }
+        ],
         "KeySchema": [
           {
-            "AttributeName": "label",
+            "AttributeName": "developer_name",
             "KeyType": "HASH"
           },
           {
-            "AttributeName": "key_prefix",
+            "AttributeName": "type",
             "KeyType": "RANGE"
           }
         ],
@@ -62,7 +87,6 @@
         "TableName": "${project}-metadata-${stage}"
       }
     },
-
     "IamRoleLambda": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -110,6 +134,11 @@
               "Effect": "Allow",
               "Action": "*",
               "Resource": "arn:aws:dynamodb:${region}:*:table/${project}-metadata-${stage}"
+            },
+            {
+              "Effect": "Allow",
+              "Action": "*",
+              "Resource": "arn:aws:dynamodb:${region}:*:table/${project}-config-${stage}"
             }
           ]
         },
