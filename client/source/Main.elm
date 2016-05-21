@@ -13,24 +13,30 @@ import Counter
 
 type alias Model =
     { app : Ui.App.Model
-    , topCounter : Counter.Model
-    , bottomCounter : Counter.Model
+    , counters : List IndexedCounter
+    , uid : Int
+    }
+
+
+type alias IndexedCounter =
+    { idx : Int
+    , model : Counter.Model
+    }
+
+
+init : Model
+init =
+    { app = Ui.App.init "SOBS"
+    , counters = []
+    , uid = 0
     }
 
 
 type Msg
     = App Ui.App.Msg
-    | Top Counter.Msg
-    | Bottom Counter.Msg
-    | Reset
-
-
-init : Int -> Int -> Model
-init top bottom =
-    { app = Ui.App.init "SOBS"
-    , topCounter = Counter.init top
-    , bottomCounter = Counter.init bottom
-    }
+    | Insert
+    | Remove
+    | Modify Int Counter.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -43,14 +49,24 @@ update msg model =
             in
                 ( { model | app = app }, Cmd.map App effect )
 
-        Top msg ->
-            ( { model | topCounter = Counter.update msg model.topCounter }, Cmd.none )
+        Insert ->
+            ( { model | counters = model.counters ++ [ IndexedCounter model.uid (Counter.init 0) ], uid = model.uid + 1 }, Cmd.none )
 
-        Bottom msg ->
-            ( { model | bottomCounter = Counter.update msg model.bottomCounter }, Cmd.none )
+        Remove ->
+            ( { model | counters = List.drop 1 model.counters }, Cmd.none )
 
-        Reset ->
-            ( { model | topCounter = Counter.init 0, bottomCounter = Counter.init 0 }, Cmd.none )
+        Modify idx msg ->
+            ( { model | counters = List.map (updateHelp idx msg) model.counters }, Cmd.none )
+
+
+updateHelp : Int -> Counter.Msg -> IndexedCounter -> IndexedCounter
+updateHelp targetIdx msg { idx, model } =
+    IndexedCounter idx
+        (if targetIdx == idx then
+            Counter.update msg model
+         else
+            model
+        )
 
 
 view : Model -> Html.Html Msg
@@ -62,18 +78,30 @@ view model =
             , Ui.textBlock "This is the basic Elm counter demo. I have turned the counter into its own module, and included it twice. Components! I also am using the elm-ui library as a styling framework. The page is automatically compiled and pushed to amazon s3 by a codeship deploy and the serverless project. "
             , Html.a [ href "http://github.com/cdcarter/sobs" ] [ text "view on github" ]
             ]
+        , Ui.Container.row [] (List.map viewIndexedCounter model.counters)
         , Ui.Container.row []
-            [ Html.App.map Top (Counter.view model.topCounter)
-            , Html.App.map Bottom (Counter.view model.bottomCounter)
+            [ (if List.length model.counters < 3 then
+                Ui.Button.primary "Insert" Insert
+               else
+                text ""
+              )
+            , (if List.length model.counters > 0 then
+                Ui.Button.primary "Remove" Remove
+               else
+                text ""
+              )
             ]
-        , Ui.Container.row []
-            [ Ui.IconButton.primary "Reset" "ion-ios-refresh-outline" "left" Reset ]
         ]
+
+
+viewIndexedCounter : IndexedCounter -> Html.Html Msg
+viewIndexedCounter { idx, model } =
+    Html.App.map (Modify idx) (Counter.view model)
 
 
 main =
     Html.App.program
-        { init = ( init 0 0, Cmd.none )
+        { init = ( init, Cmd.none )
         , view = view
         , update = update
         , subscriptions = \_ -> Sub.none

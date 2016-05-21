@@ -5,6 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Ui.Container
 import Ui.Button
+import Ui
 
 
 -- MODEL
@@ -13,12 +14,14 @@ import Ui.Button
 type alias Model =
     { container : Ui.Container.Model
     , counter : Int
+    , clicks : Int
     }
 
 
 init : Int -> Model
 init count =
     { counter = 0
+    , clicks = 0
     , container =
         { direction = "ltr"
         , align = ""
@@ -40,10 +43,10 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         Increment ->
-            {model | counter = model.counter + 1}
+            {model | counter = model.counter + 1, clicks = model.clicks + 1}
 
         Decrement ->
-            {model | counter = model.counter - 1}
+            {model | counter = model.counter - 1, clicks = model.clicks + 1}
 
 
 
@@ -63,5 +66,6 @@ view model =
                 [ Ui.Button.primary "Decrement" Decrement
                 , Ui.Button.primary "Increment" Increment
                 ]
+            , Ui.textBlock ("Clicked: " ++ (toString model.clicks))
             ]
         ]
