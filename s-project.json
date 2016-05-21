@@ -1,5 +1,13 @@
 {
   "name": "sobs",
   "custom": {},
-  "plugins": []
+  "plugins": [
+    "serverless-offline",  
+    "serverless-client-s3"
+  ],
+  "custom" : {
+    "client": {
+        "bucketName": "sobs.client.${stage}.${region}"
+    }
+  }
 }
