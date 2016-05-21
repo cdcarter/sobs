@@ -2,6 +2,37 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "IAM and DynamoDB Resources for SOBS",
   "Resources": {
+    "FrontEndS3" : {
+      "Type" : "AWS::S3::Bucket",
+      "DeletionPolicy": "Delete",
+      "Properties" : {
+        "AccessControl" : "PublicRead",
+        "BucketName" : "sobs.client.${stage}.${region}",
+        "WebsiteConfiguration" : {
+          "IndexDocument" : "index.html",
+          "ErrorDocument" : "error.html"
+        }
+      }
+    },
+    "FrontEndS3Policy" : {
+      "Type" : "AWS::S3::BucketPolicy",
+      "Properties" : {
+        "Bucket" : {"Ref" : "FrontEndS3"},
+        "PolicyDocument" : {
+          "Version": "2008-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Action": "s3:GetObject",
+              "Resource" : { "Fn::Join" : ["", [ "arn:aws:s3:::", { "Ref" : "FrontEndS3" } , "/*" ]] }
+            }
+          ]
+        }
+      }
+    },
     "DynamoDbConfigTable": {
       "Type": "AWS::DynamoDB::Table",
       "DeletionPolicy": "Retain",
@@ -151,6 +182,10 @@
     }
   },
   "Outputs": {
+    "WebsiteURL" : {
+      "Value" : { "Fn::GetAtt" : [ "FrontEndS3", "WebsiteURL" ] },
+      "Description" : "URL for website hosted on S3"
+    },
     "IamRoleArnLambda": {
       "Description": "ARN of the lambda IAM role",
       "Value": {
