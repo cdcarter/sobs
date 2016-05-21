@@ -1,6 +1,5 @@
 {
   "name": "sobs",
-  "custom": {},
   "plugins": [
     "serverless-client-s3"
   ],
