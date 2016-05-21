@@ -13,16 +13,17 @@ init name =
         ( sobject, sobFx ) =
             SObject.init name
     in
-        ( Model sobject, Cmd.map Obj sobFx )
+        ( Model sobject name, Cmd.map Obj sobFx )
 
 
 type alias Model =
-    { sobject : SObject.Model }
+    { sobject : SObject.Model, name : String }
 
 
 type Msg
     = Obj SObject.Msg
     | Change String
+    | Blur
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -35,13 +36,15 @@ update message model =
             in
                 ( { model | sobject = obj }, Cmd.map Obj effect )
 
-        Change str ->
+        Blur ->
             let
                 ( obj, effect ) =
-                    SObject.init str
+                    SObject.init model.name
             in
                 ( { model | sobject = obj }, Cmd.map Obj effect )
-
+        
+        Change str -> 
+          ({model |name = str},Cmd.none)
 
 view : Model -> Html.Html Msg
 view model =
@@ -55,6 +58,7 @@ view model =
             [ Html.input
                 [ Html.Attributes.placeholder "ObjectName (try Unit__c)"
                 , Html.Events.onInput Change
+                , Html.Events.onBlur Blur
                 ]
                 []
             ]

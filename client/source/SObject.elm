@@ -29,13 +29,7 @@ type alias Model =
 
 init : String -> ( Model, Cmd Msg )
 init name =
-    ( { name = name
-      , label = ""
-      , custom = True
-      , labelPlural = ""
-      , customSetting = False
-      , fields = []
-      }
+    ( Model name "" True "" False []
     , getSObject name
     )
 
