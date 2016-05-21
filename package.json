@@ -10,6 +10,7 @@
     "url": "git://github.com/cdcarter/sobs"
   },
   "dependencies": {
-    "serverless-client-s3": "^2.0.0"
+    "serverless-client-s3": "^2.0.0",
+    "elm": "0.17.0"
   }
 }
