@@ -1,10 +1,10 @@
 {
-  "name": "objects",
+  "name": "view",
   "runtime": "nodejs4.3",
-  "description": "Serverless Lambda function for project: sobs",
+  "description": "SOBS Lambda Function: View a metadata item",
   "customName": false,
   "customRole": false,
-  "handler": "metadata/objects/handler.handler",
+  "handler": "metadata/object/view/handler.handler",
   "timeout": 6,
   "memorySize": 1024,
   "authorizer": {},
@@ -13,7 +13,7 @@
   },
   "endpoints": [
     {
-      "path": "/metadata/objects",
+      "path": "/metadata/object/{name}",
       "method": "GET",
       "type": "AWS",
       "authorizationType": "none",
@@ -21,7 +21,7 @@
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": {
-        "application/json": ""
+        "application/json": "{ \"name\": \"$input.params('name')\" }"
       },
       "responses": {
         "400": {
@@ -37,8 +37,7 @@
             "application/json;charset=UTF-8": ""
           }
         }
-      },
-      "handler": "/metadata/objects"
+      }
     }
   ],
   "events": [],

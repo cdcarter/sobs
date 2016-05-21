@@ -4,7 +4,7 @@
   "Resources": {
     "FrontEndS3" : {
       "Type" : "AWS::S3::Bucket",
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties" : {
         "AccessControl" : "PublicRead",
         "BucketName" : "sobs.client.${stage}.${region}",

@@ -1,8 +1,7 @@
 var dynamo = require('./dynamo');
 
 module.exports.createObject = function (event, callback) {
-  event.key_prefix = 'SObject';
-  event.label = event.name;
+  event.type = 'SObject';
   var params = {
     TableName: dynamo.metadataTableName,
     Item: event
@@ -17,6 +16,26 @@ module.exports.createObject = function (event, callback) {
     }
   });
 };
+
+module.exports.viewObject = function (event, callback) {
+  event.type = 'SObject';
+  var params = {
+    TableName: dynamo.metadataTableName,
+    Key:{
+        "name": event.name,
+        "type": "SObject"
+    }
+  };
+
+  return dynamo.doc.get(params, function (error, data) {
+    if (error) {
+      callback(error);
+    } else {
+      callback(error, data["Item"]);
+    }
+  });
+};
+
 
 module.exports.index = function (event, callback) {
   var params = {
@@ -33,9 +52,8 @@ module.exports.index = function (event, callback) {
     if (error) {
       callback(error);
     } else {
-      var items = data.Items;
-      var newData = { 'sobjects' : items };
-      callback(error, newData);
+      var item = data.Items[0];
+      callback(error, item);
     }
   });
 };
