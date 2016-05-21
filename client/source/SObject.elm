@@ -1,4 +1,4 @@
-module SObject exposing (Model, Msg,helpLoad, init, getSObject, update, view)
+module SObject exposing (Model, Msg, init, update, view)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -12,7 +12,7 @@ import Field
 
 main =
     Html.App.program
-        { init = ( init "", getSObject "Unit__c" )
+        { init = init "Unit__c"
         , view = view
         , update = update
         , subscriptions = \_ -> Sub.none
@@ -37,27 +37,26 @@ type alias Model =
 -- init
 
 
-init : String -> Model
+init : String -> ( Model, Cmd Msg )
 init name =
-    { name = name
-    , label = ""
-    , custom = True
-    , labelPlural = ""
-    , customSetting = False
-    , fields = []
-    }
+    ( { name = name
+      , label = ""
+      , custom = True
+      , labelPlural = ""
+      , customSetting = False
+      , fields = []
+      }
+    , getSObject name
+    )
 
 
 
 -- update
-helpLoad : Msg
-helpLoad =
-  Called
 
 
 type Msg
     = N
-    | Called
+--    | DoIt
     | FetchSucceed Model
     | FetchFail Http.Error
 
@@ -65,8 +64,8 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Called ->
-            ( model, getSObject model.name )
+--        DoIt ->
+--            ( model, getSObject model.name )
 
         N ->
             ( model, Cmd.none )
@@ -101,9 +100,14 @@ decodeSObject =
 
 -- view
 
+
 view : Model -> Html Msg
 view model =
-  if model.labelPlural  == "" then text "" else render model
+    if model.labelPlural == "" then
+        text ""
+    else
+        render model
+
 
 render : Model -> Html Msg
 render model =
@@ -114,7 +118,7 @@ render model =
         fieldHeader =
             tr [] [ th [] [ text "Name" ], th [] [ text "Type" ] ]
     in
-        div [ ]
+        div []
             [ h1 [] [ text model.labelPlural ]
             , table []
                 [ tr [] [ td [] [ text "Custom?" ], td [] [ text (toString model.custom) ] ]

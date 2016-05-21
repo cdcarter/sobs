@@ -4,44 +4,31 @@ import Html exposing (div, span, strong, text)
 import Html.Attributes exposing (href)
 import Html.App
 import Html.Events
-import Ui.Container
-import Ui.Button
-import Ui.IconButton
-import Ui.App
-import Ui
 import SObject
 
 
+init : String -> ( Model, Cmd Msg )
+init name =
+    let
+        ( sobject, sobFx ) =
+            SObject.init name
+    in
+        ( Model sobject, Cmd.map Obj sobFx )
+
+
 type alias Model =
-    { app : Ui.App.Model
-    , sobject : SObject.Model
-    }
-
-
-init : Model
-init =
-    { app = Ui.App.init "SOBS"
-    , sobject = SObject.init "Unit__c"
+    { sobject : SObject.Model
     }
 
 
 type Msg
-    = App Ui.App.Msg
-    | Obj SObject.Msg
-    | Load
+    = Obj SObject.Msg
     | Change String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
-        App act ->
-            let
-                ( app, effect ) =
-                    Ui.App.update act model.app
-            in
-                ( { model | app = app }, Cmd.map App effect )
-
         Obj msg ->
             let
                 ( obj, effect ) =
@@ -49,37 +36,37 @@ update message model =
             in
                 ( { model | sobject = obj }, Cmd.map Obj effect )
 
-        Load ->
+        Change str ->
             let
                 ( obj, effect ) =
-                    SObject.update SObject.helpLoad model.sobject
+                    SObject.init str
             in
                 ( { model | sobject = obj }, Cmd.map Obj effect )
-        
-        Change str ->
-          ({ model | sobject = SObject.init str}, Cmd.none )
 
 
 view : Model -> Html.Html Msg
 view model =
-    Ui.App.view App
-        model.app
-        [ Ui.Container.column []
-            [ Ui.title [] [ text "SObject Viewer" ]
-            , Ui.textBlock " "
+    div []
+        [ div []
+            [ Html.h1 [] [ text "SObject Viewer" ]
+            , text ""
             , Html.a [ href "http://github.com/cdcarter/sobs" ] [ text "view on github" ]
             ]
-        , Ui.Container.row [] 
-          [ Html.input [ Html.Attributes.placeholder "ObjectName", Html.Events.onInput Change , Html.Events.onBlur Load] []
-          
-          ]
-        , Ui.Container.row [] [ Html.App.map Obj (SObject.view model.sobject) ]
+        , div []
+            [ Html.input
+                [ Html.Attributes.placeholder "ObjectName (try Unit__c)"
+                , Html.Events.onInput Change
+                  --                , Html.Events.onBlur (Obj SObject.helpLoad)
+                ]
+                []
+            ]
+        , div [] [ Html.App.map Obj (SObject.view model.sobject) ]
         ]
 
 
 main =
     Html.App.program
-        { init = ( init, Cmd.none )
+        { init = init ""
         , view = view
         , update = update
         , subscriptions = \_ -> Sub.none
