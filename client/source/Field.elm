@@ -1,9 +1,6 @@
 module Field exposing (Model, decode, init, render)
 
 import Html exposing (..)
-import Html.Lazy
-import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
 import Json.Decode as Json
 
 
@@ -25,6 +22,6 @@ init name fieldType =
     Model name fieldType
 
 
-render : Model -> (Html.Html a)
+render : Model -> Html.Html a
 render { name, fieldType } =
     tr [] [ td [] [ text name ], td [] [ text fieldType ] ]
