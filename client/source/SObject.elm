@@ -10,16 +10,6 @@ import Task
 import Field
 
 
-main =
-    Html.App.program
-        { init = init "Unit__c"
-        , view = view
-        , update = update
-        , subscriptions = \_ -> Sub.none
-        }
-
-
-
 -- Model
 
 
@@ -55,21 +45,13 @@ init name =
 
 
 type Msg
-    = N
---    | DoIt
-    | FetchSucceed Model
+    = FetchSucceed Model
     | FetchFail Http.Error
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
---        DoIt ->
---            ( model, getSObject model.name )
-
-        N ->
-            ( model, Cmd.none )
-
         FetchSucceed obj ->
             ( obj, Cmd.none )
 
@@ -113,7 +95,7 @@ render : Model -> Html Msg
 render model =
     let
         fieldRows =
-            List.map (Field.view N) model.fields
+            List.map (Field.render) model.fields
 
         fieldHeader =
             tr [] [ th [] [ text "Name" ], th [] [ text "Type" ] ]
@@ -131,3 +113,16 @@ render model =
                 , tbody [] fieldRows
                 ]
             ]
+
+
+
+-- Standalone test
+
+
+main =
+    Html.App.program
+        { init = init "Unit__c"
+        , view = view
+        , update = update
+        , subscriptions = \_ -> Sub.none
+        }

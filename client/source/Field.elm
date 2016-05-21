@@ -1,4 +1,4 @@
-module Field exposing (Model, decode, init, render, view)
+module Field exposing (Model, decode, init, render)
 
 import Html exposing (..)
 import Html.Lazy
@@ -25,11 +25,6 @@ init name fieldType =
     Model name fieldType
 
 
-render : msg -> Model -> Html.Html msg
-render msg { name, fieldType } =
+render : Model -> (Html.Html a)
+render { name, fieldType } =
     tr [] [ td [] [ text name ], td [] [ text fieldType ] ]
-
-
-view : msg -> Model -> Html.Html msg
-view msg model =
-    Html.Lazy.lazy2 render msg model

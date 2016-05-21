@@ -17,8 +17,7 @@ init name =
 
 
 type alias Model =
-    { sobject : SObject.Model
-    }
+    { sobject : SObject.Model }
 
 
 type Msg
@@ -46,7 +45,7 @@ update message model =
 
 view : Model -> Html.Html Msg
 view model =
-    div []
+    div [Html.Attributes.style [("padding","10px")]]
         [ div []
             [ Html.h1 [] [ text "SObject Viewer" ]
             , text ""
@@ -56,7 +55,6 @@ view model =
             [ Html.input
                 [ Html.Attributes.placeholder "ObjectName (try Unit__c)"
                 , Html.Events.onInput Change
-                  --                , Html.Events.onBlur (Obj SObject.helpLoad)
                 ]
                 []
             ]
