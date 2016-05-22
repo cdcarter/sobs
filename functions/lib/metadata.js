@@ -52,8 +52,8 @@ module.exports.index = function (event, callback) {
     if (error) {
       callback(error);
     } else {
-      var item = data.Items[0];
-      callback(error, item);
+      var items = data.Items;
+      callback(error, items);
     }
   });
 };

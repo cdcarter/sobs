@@ -57,7 +57,7 @@ getSObject : String -> Cmd Msg
 getSObject name =
     let
         url =
-            "https://l8fii0ljb8.execute-api.us-west-2.amazonaws.com/dev/metadata/object/" ++ name
+            "https://l8fii0ljb8.execute-api.us-west-2.amazonaws.com/next/metadata/object/" ++ name
     in
         Task.perform FetchFail FetchSucceed (Http.get decodeSObject url)
 

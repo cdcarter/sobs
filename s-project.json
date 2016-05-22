@@ -1,14 +1,21 @@
 {
   "name": "sobs",
-  "plugins": 
-    [ "serverless-client-s3"
-    ,  "serverless-cors-plugin"
-    ],
-  "custom" : 
-    { "client": { "bucketName": "sobs.client.${stage}.${region}" }
-    , "cors": 
-      { "allowOrigin": "*"
-      , "allowHeaders": ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key"]
-      }
+  "custom": {
+    "client": {
+      "bucketName": "sobs.client.${stage}.${region}"
+    },
+    "cors": {
+      "allowOrigin": "*",
+      "allowHeaders": [
+        "Content-Type",
+        "X-Amz-Date",
+        "Authorization",
+        "X-Api-Key"
+      ]
     }
-  }
+  },
+  "plugins": [
+    "serverless-client-s3",
+    "serverless-cors-plugin"
+  ]
+}
